@@ -104,7 +104,7 @@ $(".list-group").on("click", "span", function(){
   dateInput.trigger("focus")
 })
 
-//value of due datre was changed
+//value of due date was changed
 $(".list-group").on("blur", "input[type=text]", function(){
   //get current text
   let date = $(this)
@@ -133,6 +133,72 @@ $(".list-group").on("blur", "input[type=text]", function(){
 
   //replace input with span element
   $(this).replaceWith(taskSpan)
+})
+
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  //create a copy if the dragged element and move the copy instead of original
+  helper: "clone",
+  activate: function(event){
+    //console.log("activate", this);
+  },
+  deactivate: function(event) {
+    //console.log("deactivate", this)
+  },
+  over: function(event) {
+    //console.log("over", this)
+  },
+  out: function(event) {
+    //console.log("out", this)
+  },
+  update: function(event) {
+    //arr store the task data in
+    var tempArr = [];
+    //the children method rts arr of li elements children
+    // loop over current set of children in sortable list 
+    $(this).children().each(function(){
+      var text = $(this)
+      .find("p")
+      .text()
+      .trim()
+
+      var date = $(this)
+      .find("span")
+      .text()
+      .trim()
+
+      //add task data to the temp array as an object
+      tempArr.push({
+        text: text,
+        date: date
+      })
+    })
+    //trim down lists ID to match object property 
+    var arrName = $(this)
+    .attr("id")
+    .replace("list-", "");
+
+    //update arr on tasks object and save
+    tasks[arrName] = tempArr;
+    saveTasks();
+  }
+})
+
+$("#basura").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  drop: function(event, ui){
+    ui.draggable.remove();
+    console.log("drop")
+  },
+  over: function(event, ui) {
+    console.log("over")
+  },
+  out: function(event, ui) {
+    console.log("out")
+  }
 })
 
 // modal was triggered
